@@ -142,7 +142,7 @@ export function CryptoBubblesWidget() {
     <Card className="mb-4 rounded-xl border-0 bg-[#141331] bg-[url('/union.svg')] bg-no-repeat p-6">
       <div className="text-center">
         <div className="mb-4 flex items-center justify-center gap-2">
-          <h3 className="text-gray-400 text-lg">Bubbles</h3>
+          <h3 className="!text-gray-400 text-lg">Bubbles</h3>
           <Button
             variant="ghost"
             size="icon"

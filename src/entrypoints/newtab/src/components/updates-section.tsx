@@ -85,7 +85,7 @@ export function UpdatesSection() {
   return (
     <div className="origin-top">
       <div className="lg:scale-90 xl:scale-95 2xl:scale-100">
-        <h2 className="mb-4 text-sm font-medium text-gray-400">UPDATES</h2>
+        <h2 className="mb-4 text-sm font-medium !text-gray-400">UPDATES</h2>
         <Masonry
           breakpointCols={breakpointColumnsObj}
           className="flex w-full gap-4"

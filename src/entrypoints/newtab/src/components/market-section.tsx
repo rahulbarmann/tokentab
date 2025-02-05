@@ -117,7 +117,7 @@ export function MarketSection() {
 
   return (
     <div className="mb-8">
-      <h2 className="mb-4 text-sm font-medium text-gray-400">MARKET</h2>
+      <h2 className="mb-4 text-sm font-medium !text-gray-400">MARKET</h2>
       <div className="grid grid-cols-4 gap-4">
         {TOKEN_POSITIONS.map((position) => {
           const crypto = cryptoPrices[position]
