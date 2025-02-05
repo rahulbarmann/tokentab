@@ -57,7 +57,11 @@ export default defineConfig({
     },
   }),
   manifest: {
-    permissions: ['storage', 'sidePanel'],
+    // @ts-expect-error background is valid for Chrome extensions
+    background: {
+      service_worker: 'src/entrypoints/background/index.ts', // Add this
+    },
+    permissions: ['storage', 'sidePanel', 'https://cryptobubbles.net/*'],
     action: {
       default_title: 'Click to open oracle panel',
     },
@@ -67,7 +71,6 @@ export default defineConfig({
         matches: ['*://*/*'],
       },
     ],
-    // @ts-expect-error chrome_url_overrides is valid for Chrome extensions
     chrome_url_overrides: {
       newtab: 'src/entrypoints/newtab/index.html',
     },

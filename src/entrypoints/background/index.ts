@@ -7,4 +7,14 @@ export default defineBackground(() => {
       sendResponse({ success: true })
     }
   })
+
+  chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+    if (request.type === 'fetchCryptoBubbles') {
+      fetch('https://cryptobubbles.net/backend/data/bubbles1000.usd.json')
+        .then((response) => response.json())
+        .then((data) => sendResponse({ data }))
+        .catch((error) => sendResponse({ error: error.message }))
+      return true // Required to use sendResponse asynchronously
+    }
+  })
 })

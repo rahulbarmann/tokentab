@@ -40,8 +40,14 @@ export function CryptoBubblesWidget() {
   const fetchData = async () => {
     try {
       setLoading(true)
-      const response = await fetch('https://cryptobubbles.net/backend/data/bubbles1000.usd.json')
-      const data = await response.json()
+      const response = await chrome.runtime.sendMessage({
+        type: 'fetchCryptoBubbles',
+      })
+      if (response.error) {
+        console.error(response.error)
+        return
+      }
+      const data = response.data
 
       // Filter out any coins with missing or invalid performance data
       const validData = data.filter((coin: CryptoData) => {
