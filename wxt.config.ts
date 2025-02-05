@@ -3,6 +3,7 @@
 import { resolve } from 'node:path'
 import type { Manifest } from 'webextension-polyfill'
 
+import tailwindcss from '@tailwindcss/vite'
 import react from '@vitejs/plugin-react'
 import AutoImport from 'unplugin-auto-import/vite'
 import { FileSystemIconLoader } from 'unplugin-icons/loaders'
@@ -10,7 +11,6 @@ import Icons from 'unplugin-icons/vite'
 import nodePolyfills from 'vite-plugin-node-stdlib-browser'
 import Pages from 'vite-plugin-pages'
 import { defineConfig } from 'wxt'
-import tailwindcss from '@tailwindcss/vite'
 
 export default defineConfig({
   srcDir: 'src',
