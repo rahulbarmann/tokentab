@@ -1,19 +1,16 @@
-/* eslint-disable antfu/if-newline */
-/* eslint-disable @stylistic/arrow-parens */
-/* eslint-disable antfu/consistent-list-newline */
-/* eslint-disable @stylistic/comma-dangle */
-/* eslint-disable simple-import-sort/imports */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable unicorn/prefer-module */
 import { resolve } from 'node:path'
 import type { Manifest } from 'webextension-polyfill'
 
 import react from '@vitejs/plugin-react'
-import UnoCSS from 'unocss/vite'
 import AutoImport from 'unplugin-auto-import/vite'
 import { FileSystemIconLoader } from 'unplugin-icons/loaders'
 import Icons from 'unplugin-icons/vite'
 import nodePolyfills from 'vite-plugin-node-stdlib-browser'
 import Pages from 'vite-plugin-pages'
 import { defineConfig } from 'wxt'
+import tailwindcss from '@tailwindcss/vite'
 
 export default defineConfig({
   srcDir: 'src',
@@ -21,7 +18,7 @@ export default defineConfig({
   vite: () => ({
     plugins: [
       react(),
-      UnoCSS(),
+      tailwindcss(),
       nodePolyfills(),
       AutoImport({
         imports: ['react'],

@@ -1,7 +1,7 @@
+/* eslint-disable @stylistic/comma-dangle */
 // main.ts
 import '@/assets/style/index.css'
 import '@unocss/reset/tailwind-compat.css'
-import 'virtual:uno.css'
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import ReactDOM from 'react-dom/client'
@@ -17,5 +17,5 @@ ReactDOM.createRoot(document.querySelector('#root')!).render(
     <QueryClientProvider client={queryClient}>
       <App />
     </QueryClientProvider>
-  </WagmiProvider>,
+  </WagmiProvider>
 )
