@@ -17,6 +17,9 @@ const getBottomPadding = (index: number, columnCount: number) => {
   return row % 2 === 0 ? '0px' : '8px' // Alternate row padding
 }
 
+// Helper function to construct tweet URL
+const getTweetUrl = (cardId: string) => `https://x.com/jessepollak/status/${cardId}`
+
 export function UpdatesSection() {
   const [cards, setCards] = useState<Card[]>([])
   const [isLoading, setIsLoading] = useState(true)
@@ -34,6 +37,10 @@ export function UpdatesSection() {
     1440: 3, // 3 columns for smaller desktop
     1024: 2, // 2 columns for tablet landscape
     768: 1, // 1 column for mobile
+  }
+
+  const handleCardClick = (cardId: string) => {
+    window.open(getTweetUrl(cardId), '_blank')
   }
 
   const lastCardRef = useCallback(
@@ -105,8 +112,13 @@ export function UpdatesSection() {
                   width: '100%',
                   breakInside: 'avoid',
                 }}
+                onClick={() => handleCardClick(card.id)}
               >
-                <ContentCard card={card} isExpanded={isExpanded} />
+                <ContentCard
+                  card={card}
+                  isExpanded={isExpanded}
+                  className="hover:outline hover:outline-indigo-800 hover:outline-offset-2 cursor-pointer transition-all duration-200"
+                />
               </div>
             )
           })}

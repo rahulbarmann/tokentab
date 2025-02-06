@@ -15,7 +15,15 @@ const extractFirstImage = (html: string): string | null => {
   return firstImage?.src || null
 }
 
-export function ContentCard({ card, isExpanded = false }: { card: ContentCardType; isExpanded?: boolean }) {
+export function ContentCard({
+  card,
+  isExpanded = false,
+  className,
+}: {
+  card: ContentCardType
+  isExpanded?: boolean
+  className?: string
+}) {
   if (card.type === 'tweet') {
     const htmlImage = extractFirstImage(card.html)
     const imageToShow = card.media?.url || htmlImage
@@ -25,7 +33,8 @@ export function ContentCard({ card, isExpanded = false }: { card: ContentCardTyp
       <Card
         className={cn(
           'rounded-xl border-0 bg-gray-900/50 p-4 w-full transition-all duration-300',
-          isExpanded && 'md:col-span-2'
+          isExpanded && 'md:col-span-2',
+          className
         )}
       >
         <div className="mb-3 flex items-start justify-between">
