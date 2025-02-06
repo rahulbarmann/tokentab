@@ -29,6 +29,17 @@ export function ContentCard({
     const imageToShow = card.media?.url || htmlImage
     const contentWithoutImages = card.html.replace(/<img[^>]*>/g, '')
 
+    // Utility function to format numbers
+    const formatNumber = (num: number): string => {
+      if (num >= 1000000) {
+        return (num / 1000000).toFixed(1).replace(/\.0$/, '') + 'M'
+      }
+      if (num >= 1000) {
+        return (num / 1000).toFixed(1).replace(/\.0$/, '') + 'K'
+      }
+      return num.toString()
+    }
+
     return (
       <Card
         className={cn(
@@ -78,23 +89,23 @@ export function ContentCard({
         <div className="flex flex-wrap pt-4 items-center gap-4 text-gray-400">
           <div className="flex items-center gap-1.5">
             <Eye className="size-3.5" />
-            <span className="text-xs">{card.engagement.views}</span>
+            <span className="text-xs">{formatNumber(card.engagement.views)}</span>
           </div>
           <div className="flex items-center gap-1.5">
             <Heart className="size-3.5" />
-            <span className="text-xs">{card.engagement.likes}</span>
+            <span className="text-xs">{formatNumber(card.engagement.likes)}</span>
           </div>
           <div className="flex items-center gap-1.5">
             <MessageCircle className="size-3.5" />
-            <span className="text-xs">{card.engagement.replies}</span>
+            <span className="text-xs">{formatNumber(card.engagement.replies)}</span>
           </div>
           <div className="flex items-center gap-1.5">
             <Repeat className="size-3.5" />
-            <span className="text-xs">{card.engagement.retweets}</span>
+            <span className="text-xs">{formatNumber(card.engagement.retweets)}</span>
           </div>
           <div className="flex items-center gap-1.5">
             <Bookmark className="size-3.5" />
-            <span className="text-xs">{card.engagement.bookmarks}</span>
+            <span className="text-xs">{formatNumber(card.engagement.bookmarks)}</span>
           </div>
         </div>
       </Card>
