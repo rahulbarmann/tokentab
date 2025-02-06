@@ -34,7 +34,7 @@ const NewTab = () => {
     const savedState = localStorage.getItem('sidebarExpanded')
     return savedState !== null ? JSON.parse(savedState) : true
   })
-  const [provider, setProvider] = useState<any>(null);
+  const [provider, setProvider] = useState<any>(null)
   const [showWidgetDialog, setShowWidgetDialog] = useState(false)
   const [selectedWidgets, setSelectedWidgets] = useState<string[]>(() => {
     const saved = localStorage.getItem('selectedWidgets')
@@ -43,24 +43,23 @@ const NewTab = () => {
   const [selectedCategory, setSelectedCategory] = useState('All')
   const [searchQuery, setSearchQuery] = useState('')
 
-  const {connector} = useAccount();
+  const { connector } = useAccount()
 
   useEffect(() => {
     if (connector) {
-    connector.getProvider()
-    .then((_provider: any) => {
-      console.log("wagmi provider: ", _provider)
-      setProvider(_provider);
-    })
-    .catch((error: any) => {
-      console.error("Error getting provider: ", error);
-    })
-      
+      connector
+        .getProvider()
+        .then((_provider: any) => {
+          console.log('wagmi provider: ', _provider)
+          setProvider(_provider)
+        })
+        .catch((error: any) => {
+          console.error('Error getting provider: ', error)
+        })
     }
-  }, [connector]);
+  }, [connector])
 
   // const provider = connector?.getProvider();
-
 
   useEffect(() => {
     // Save the current state to local storage whenever it changes
@@ -78,9 +77,7 @@ const NewTab = () => {
   }
 
   const toggleWidget = (widgetId: string) => {
-    setSelectedWidgets((prev) =>
-      prev.includes(widgetId) ? prev.filter((id) => id !== widgetId) : [...prev, widgetId],
-    )
+    setSelectedWidgets((prev) => (prev.includes(widgetId) ? prev.filter((id) => id !== widgetId) : [...prev, widgetId]))
   }
 
   //  Fill this form https://cowprotocol.typeform.com/to/rONXaxHV once you pick your "appCode"
@@ -196,7 +193,10 @@ const NewTab = () => {
         <div className={`${isExpanded ? 'p-4' : 'space-y-4 py-4 pl-2 pr-4'}`}>
           {isExpanded ? (
             <>
-              <Button className="mb-4 h-16 w-full rounded-2xl bg-[#17172A] text-white hover:bg-gray-700" onClick={() => setShowWidgetDialog(true)}>
+              <Button
+                className="mb-4 h-16 w-full rounded-2xl bg-[#17172A] text-white hover:bg-gray-700"
+                onClick={() => setShowWidgetDialog(true)}
+              >
                 <div className="font-semibold">Add more widgets</div>
                 <img src={widget} alt="widget" width={50} height={20} className="mr-2 size-4" />
               </Button>
@@ -231,12 +231,12 @@ const NewTab = () => {
       </div>
 
       <Dialog open={showWidgetDialog} onOpenChange={setShowWidgetDialog}>
-        <DialogContent className="bg-[#080816] text-white max-w-full h-screen !rounded-none !border-0 p-0 flex flex-col">
+        <DialogContent className="bg-[#080816] text-white max-w-full h-screen !rounded-none !border-0 p-0 flex flex-col [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-[#312F62]/50 [&::-webkit-scrollbar-thumb]:rounded-full">
           {/* Close button */}
           <Button
             variant="ghost"
             size="icon"
-            className="absolute right-8 top-8 z-10 size-10 rounded-full bg-[#1F1F35] hover:bg-[#2a2a4a] text-white border border-[#312F62]/30 cursor-pointer"
+            className="absolute right-6 top-6 z-10 size-8 rounded-full bg-[#1F1F35] hover:bg-[#2a2a4a] text-white border border-[#312F62]/30 cursor-pointer"
             onClick={() => setShowWidgetDialog(false)}
           >
             ✕
@@ -244,51 +244,38 @@ const NewTab = () => {
 
           {/* Fixed Header Section */}
           <div className="flex-shrink-0 relative bg-[#0D0B21] border-b border-[#312F62]/30">
-            <div className="absolute inset-0">
-              <div className="absolute -top-20 -left-20 size-96 rounded-full bg-[#4E4BDE]/5 blur-[100px]"></div>
-              <div className="absolute -top-40 left-60 size-96 rounded-full bg-[#4E4BDE]/3 blur-[100px]"></div>
-              <div className="absolute top-0 right-0 size-96 rounded-full bg-[#4E4BDE]/5 blur-[100px]"></div>
+            <div className="absolute inset-0 overflow-hidden">
+              <div className="absolute -top-10 -left-10 size-72 rounded-full bg-[#4E4BDE]/5 blur-[80px]"></div>
+              <div className="absolute -top-20 left-40 size-72 rounded-full bg-[#4E4BDE]/3 blur-[80px]"></div>
+              <div className="absolute -top-10 right-0 size-72 rounded-full bg-[#4E4BDE]/5 blur-[80px]"></div>
             </div>
-            
-            <div className="relative max-w-[1200px] mx-auto px-8 pt-12 pb-6">
-              <DialogHeader className="mb-6">
-                <DialogTitle className="text-4xl font-bold bg-gradient-to-r from-white to-white/60 bg-clip-text text-transparent mb-2">
+
+            <div className="relative max-w-[1200px] mx-auto px-6 py-6">
+              <DialogHeader className="mb-0">
+                <DialogTitle className="text-2xl font-bold bg-gradient-to-r from-white to-white/60 bg-clip-text text-transparent mb-1">
                   Widget Marketplace
                 </DialogTitle>
-                <p className="text-gray-400 text-base max-w-2xl">
-                  Customize your dashboard with powerful widgets. Each widget is designed to enhance your crypto experience.
+                <p className="text-gray-400 text-sm max-w-2xl">
+                  Customize your dashboard with powerful widgets. Each widget is designed to enhance your crypto
+                  experience.
                 </p>
               </DialogHeader>
             </div>
           </div>
 
           {/* Search and Categories - Fixed */}
-          <div className="flex-shrink-0 sticky top-0 z-10 bg-[#080816] px-8 pt-8 pb-4">
+          <div className="flex-shrink-0 sticky top-0 z-10 bg-[#080816] px-6 py-4 border-b border-[#312F62]/30">
             <div className="max-w-[1200px] mx-auto">
-              {/* Search Bar */}
-              {/* <div className="relative mb-6">
-                <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
-                  <span className="i-lucide:search size-5 text-gray-500" />
-                </div>
-                <input
-                  type="text"
-                  placeholder="Search widgets..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full h-14 rounded-2xl bg-[#141428]/50 border-[#312F62]/30 border px-12 text-white placeholder:text-gray-500 focus:outline-none focus:border-[#4E4BDE]/50 focus:ring-2 focus:ring-[#4E4BDE]/20 transition-all duration-200 cursor-text"
-                />
-              </div> */}
-
               {/* Categories */}
-              <div className="flex gap-3 overflow-x-auto pb-2">
+              <div className="flex gap-2 overflow-x-auto pb-1 [&::-webkit-scrollbar]:h-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-[#312F62]/50 [&::-webkit-scrollbar-thumb]:rounded-full">
                 {['All', 'Finance', 'Trading', 'Analytics', 'NFTs'].map((category) => (
                   <Button
                     key={category}
                     size="sm"
                     onClick={() => setSelectedCategory(category)}
-                    className={`rounded-full px-6 py-5 whitespace-nowrap text-sm font-medium transition-all duration-200 cursor-pointer ${
-                      category === selectedCategory 
-                        ? 'bg-[#4E4BDE] text-white hover:bg-[#6d6beb] shadow-lg shadow-[#4E4BDE]/20' 
+                    className={`rounded-full px-5 py-4 whitespace-nowrap text-sm font-medium transition-all duration-200 cursor-pointer ${
+                      category === selectedCategory
+                        ? 'bg-[#4E4BDE] text-white hover:bg-[#6d6beb] shadow-lg shadow-[#4E4BDE]/20'
                         : 'bg-[#141428]/50 text-gray-400 hover:text-white hover:bg-[#1F1F35] hover:shadow-lg hover:shadow-[#4E4BDE]/10'
                     }`}
                   >
@@ -300,14 +287,15 @@ const NewTab = () => {
           </div>
 
           {/* Scrollable Content Section */}
-          <div className="flex-1 overflow-y-auto min-h-0">
-            <div className="max-w-[1200px] mx-auto px-8 py-8">
+          <div className="flex-1 overflow-y-auto min-h-0 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-[#312F62]/50 [&::-webkit-scrollbar-thumb]:rounded-full">
+            <div className="max-w-[1200px] mx-auto px-6 py-6">
               {/* Widgets Grid */}
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {AVAILABLE_WIDGETS.filter(widget => 
-                  (selectedCategory === 'All' || widget.category === selectedCategory) &&
-                  (widget.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                   widget.description.toLowerCase().includes(searchQuery.toLowerCase()))
+                {AVAILABLE_WIDGETS.filter(
+                  (widget) =>
+                    (selectedCategory === 'All' || widget.category === selectedCategory) &&
+                    (widget.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                      widget.description.toLowerCase().includes(searchQuery.toLowerCase()))
                 ).map((widget) => (
                   <div
                     key={widget.id}
@@ -319,16 +307,18 @@ const NewTab = () => {
                       </div>
                       <div>
                         <h3 className="font-semibold text-lg text-white/90 mb-1">{widget.name}</h3>
-                        <span className="text-xs text-gray-400 bg-[#1F1F35] px-2 py-0.5 rounded-full">{widget.category}</span>
+                        <span className="text-xs text-gray-400 bg-[#1F1F35] px-2 py-0.5 rounded-full">
+                          {widget.category}
+                        </span>
                       </div>
                     </div>
-                    
+
                     <p className="text-gray-400 text-sm mb-6 flex-grow leading-relaxed">{widget.description}</p>
-                    
+
                     <Button
                       variant={selectedWidgets.includes(widget.id) ? 'default' : 'secondary'}
                       onClick={() => toggleWidget(widget.id)}
-                      className={`w-full h-12 rounded-xl font-medium transition-all duration-300 cursor-pointer flex items-center justify-center ${
+                      className={`w-full h-11 rounded-xl font-medium transition-all duration-300 cursor-pointer flex items-center justify-center ${
                         selectedWidgets.includes(widget.id)
                           ? 'bg-[#4E4BDE] hover:bg-[#6d6beb] shadow-lg shadow-[#4E4BDE]/20'
                           : 'bg-[#1F1F35] hover:bg-[#2a2a4a] hover:shadow-lg hover:shadow-[#4E4BDE]/10'
