@@ -1,3 +1,4 @@
+import globe from '@/assets/globe.svg'
 import nft from '@/assets/nft.svg'
 import portfolio from '@/assets/portfolio.svg'
 import stats from '@/assets/stats.svg'
@@ -8,6 +9,7 @@ import { MarketSection } from '@/entrypoints/newtab/src/components/market-sectio
 import { NFTWidget } from '@/entrypoints/newtab/src/components/nft-widget'
 import { PortfolioWidget } from '@/entrypoints/newtab/src/components/portfolio-widget'
 import { Button } from '@/entrypoints/newtab/src/components/ui/button'
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/entrypoints/newtab/src/components/ui/dialog'
 import { UpdatesSection } from '@/entrypoints/newtab/src/components/updates-section'
 import '@/entrypoints/newtab/src/NewTab.css'
 import '@/entrypoints/newtab/src/NewTab.scss'
@@ -16,8 +18,13 @@ import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useAccount } from 'wagmi'
 
-
-
+// Define widget types
+interface Widget {
+  id: string
+  name: string
+  icon: string
+  component: React.ReactNode
+}
 
 const NewTab = () => {
   const [isExpanded, setIsExpanded] = useState(() => {
@@ -26,6 +33,11 @@ const NewTab = () => {
     return savedState !== null ? JSON.parse(savedState) : true
   })
   const [provider, setProvider] = useState<any>(null);
+  const [showWidgetDialog, setShowWidgetDialog] = useState(false)
+  const [selectedWidgets, setSelectedWidgets] = useState<string[]>(() => {
+    const saved = localStorage.getItem('selectedWidgets')
+    return saved ? JSON.parse(saved) : ['portfolio', 'cowswap', 'crypto-bubbles', 'nft']
+  })
 
   const {connector} = useAccount();
 
@@ -51,17 +63,27 @@ const NewTab = () => {
     localStorage.setItem('sidebarExpanded', JSON.stringify(isExpanded))
   }, [isExpanded])
 
+  useEffect(() => {
+    localStorage.setItem('selectedWidgets', JSON.stringify(selectedWidgets))
+  }, [selectedWidgets])
+
   const handleWidgetClick = () => {
     if (!isExpanded) {
       setIsExpanded(true)
     }
   }
 
+  const toggleWidget = (widgetId: string) => {
+    setSelectedWidgets((prev) =>
+      prev.includes(widgetId) ? prev.filter((id) => id !== widgetId) : [...prev, widgetId],
+    )
+  }
+
   //  Fill this form https://cowprotocol.typeform.com/to/rONXaxHV once you pick your "appCode"
   const params: CowSwapWidgetParams = {
     appCode: 'My Cool App', // Name of your app (max 50 characters)
     width: '100%', // Width in pixels (or 100% to use all available space)
-    height: '640px',
+    // height: '640px',
     chainId: 1, // 1 (Mainnet), 100 (Gnosis), 11155111 (Sepolia)
     tokenLists: [
       // All default enabled token lists. Also see https://tokenlists.org
@@ -100,6 +122,33 @@ const NewTab = () => {
   // Ethereum EIP-1193 provider. For a quick test, you can pass `window.ethereum`, but consider using something like https://web3modal.com
   // const provider = window.ethereum
 
+  const AVAILABLE_WIDGETS: Widget[] = [
+    {
+      id: 'portfolio',
+      name: 'Portfolio',
+      icon: portfolio,
+      component: <PortfolioWidget />,
+    },
+    {
+      id: 'cowswap',
+      name: 'CowSwap',
+      icon: stats,
+      component: <CowSwapWidget params={params} provider={provider} />,
+    },
+    {
+      id: 'crypto-bubbles',
+      name: 'Crypto Bubbles',
+      icon: globe,
+      component: <CryptoBubblesWidget />,
+    },
+    {
+      id: 'nft',
+      name: 'NFT Gallery',
+      icon: nft,
+      component: <NFTWidget />,
+    },
+  ]
+
   return (
     <div className="flex h-screen overflow-hidden bg-[#0D0B21]">
       {/* Main Content Area */}
@@ -135,14 +184,13 @@ const NewTab = () => {
         <div className={`${isExpanded ? 'p-4' : 'space-y-4 py-4 pl-2 pr-4'}`}>
           {isExpanded ? (
             <>
-              <Button className="mb-4 h-16 w-full rounded-2xl bg-[#17172A] text-white hover:bg-gray-700">
+              <Button className="mb-4 h-16 w-full rounded-2xl bg-[#17172A] text-white hover:bg-gray-700" onClick={() => setShowWidgetDialog(true)}>
                 <div className="font-semibold">Add more widgets</div>
                 <img src={widget} alt="widget" width={50} height={20} className="mr-2 size-4" />
               </Button>
-              <PortfolioWidget />
-              <CowSwapWidget params={params} provider={provider} />
-              <CryptoBubblesWidget />
-              <NFTWidget />
+              {AVAILABLE_WIDGETS.filter((widget) => selectedWidgets.includes(widget.id)).map((widget) => (
+                <div key={widget.id}>{widget.component}</div>
+              ))}
             </>
           ) : (
             <>
@@ -154,34 +202,51 @@ const NewTab = () => {
               >
                 <img src={widget} alt="widget" width={50} height={20} className="size-4" />
               </Button>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="flex h-12 w-full items-center justify-center rounded-xl bg-[#141331] text-white hover:bg-[#1F1F35]"
-                onClick={handleWidgetClick}
-              >
-                <img src={portfolio} alt="widget" width={50} height={50} className="size-4" />
-              </Button>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="flex h-12 w-full items-center justify-center rounded-xl bg-[#141331] text-white hover:bg-[#1F1F35]"
-                onClick={handleWidgetClick}
-              >
-                <img src={stats} alt="widget" width={50} height={50} className="size-4" />
-              </Button>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="flex h-12 w-full items-center justify-center rounded-xl bg-[#141331] text-white hover:bg-[#1F1F35]"
-                onClick={handleWidgetClick}
-              >
-                <img src={nft} alt="widget" width={50} height={50} className="size-4" />
-              </Button>
+              {AVAILABLE_WIDGETS.filter((widget) => selectedWidgets.includes(widget.id)).map((widget) => (
+                <Button
+                  key={widget.id}
+                  variant="ghost"
+                  size="icon"
+                  className="flex h-12 w-full items-center justify-center rounded-xl bg-[#141331] text-white hover:bg-[#1F1F35]"
+                  onClick={handleWidgetClick}
+                >
+                  <img src={widget.icon} alt={widget.name} width={50} height={50} className="size-4" />
+                </Button>
+              ))}
             </>
           )}
         </div>
       </div>
+
+      <Dialog open={showWidgetDialog} onOpenChange={setShowWidgetDialog}>
+        <DialogContent className="bg-[#0D0B21] text-white sm:max-w-[425px] rounded-3xl border-[#312F62]">
+          <DialogHeader>
+            <DialogTitle className="text-xl">Customize Widgets</DialogTitle>
+          </DialogHeader>
+          <div className="mt-4 space-y-3">
+            {AVAILABLE_WIDGETS.map((widget) => (
+              <div
+                key={widget.id}
+                className="flex items-center justify-between rounded-2xl bg-[#17172A] p-4 hover:bg-[#1F1F35] transition-colors"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="flex items-center justify-center size-10 rounded-xl bg-[#1F1F35]">
+                    <img src={widget.icon} alt={widget.name} className="size-5" />
+                  </div>
+                  <span className="font-medium">{widget.name}</span>
+                </div>
+                <Button
+                  variant={selectedWidgets.includes(widget.id) ? 'default' : 'secondary'}
+                  onClick={() => toggleWidget(widget.id)}
+                  className="rounded-xl px-6"
+                >
+                  {selectedWidgets.includes(widget.id) ? 'Remove' : 'Add'}
+                </Button>
+              </div>
+            ))}
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }
