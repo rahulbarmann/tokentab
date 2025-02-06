@@ -1,9 +1,10 @@
-import { useEffect, useState } from 'react'
-import { useAccount, useChainId, useDisconnect, useConnect } from 'wagmi'
-import { Pencil, ChevronDown } from 'lucide-react'
-import { NetworkSwitcher } from '@/components/web3/SwitchNetworks'
 import { Button } from '@/components/ui/button'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
+import { NetworkSwitcher } from '@/components/web3/SwitchNetworks'
+
+import { ChevronDown, Pencil } from 'lucide-react'
+import { useEffect, useState } from 'react'
+import { useAccount, useConnect, useDisconnect } from 'wagmi'
 import metamaskFox from '../../../../assets/metamask-fox.svg'
 import metamaskIcon from '../../../../assets/metamask-icon.png'
 
@@ -29,7 +30,8 @@ export function Header() {
     const connector = connectors[0] // Usually MetaMask is the first connector
     if (connector) {
       setPendingConnectorId(connector.id)
-      await connectAsync({ connector })
+      const result = await connectAsync({ connector })
+      console.log("inside connector", {result})
     }
   }
 

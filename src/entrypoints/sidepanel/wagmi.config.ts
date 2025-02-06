@@ -1,4 +1,4 @@
-import { createExternalExtensionProvider } from '@metamask/providers'
+import provider from 'metamask-extension-provider'
 import { createConfig, http } from 'wagmi'
 import { mainnet, sepolia } from 'wagmi/chains'
 import { injected } from 'wagmi/connectors'
@@ -16,7 +16,7 @@ export const config = createConfig({
         id: 'metaMask',
         name: 'MetaMask',
         icon: '',
-        provider: createExternalExtensionProvider() as any,
+        provider: provider as any,
       },
     }),
   ],

@@ -1,19 +1,23 @@
-import { useEffect, useState } from 'react'
-import { Header } from '@/entrypoints/newtab/src/components/header'
-import { MarketSection } from '@/entrypoints/newtab/src/components/market-section'
-import { UpdatesSection } from '@/entrypoints/newtab/src/components/updates-section'
-import { PortfolioWidget } from '@/entrypoints/newtab/src/components/portfolio-widget'
-import { NFTWidget } from '@/entrypoints/newtab/src/components/nft-widget'
-import { CryptoBubblesWidget } from '@/entrypoints/newtab/src/components/crypto-bubbles-widget'
-import { Button } from '@/entrypoints/newtab/src/components/ui/button'
-import '@/entrypoints/newtab/src/NewTab.css'
-import '@/entrypoints/newtab/src/NewTab.scss'
-import { ChevronLeft, ChevronRight } from 'lucide-react'
-import widget from '@/assets/widget.svg'
+import nft from '@/assets/nft.svg'
 import portfolio from '@/assets/portfolio.svg'
 import stats from '@/assets/stats.svg'
-import nft from '@/assets/nft.svg'
+import widget from '@/assets/widget.svg'
+import { CryptoBubblesWidget } from '@/entrypoints/newtab/src/components/crypto-bubbles-widget'
+import { Header } from '@/entrypoints/newtab/src/components/header'
+import { MarketSection } from '@/entrypoints/newtab/src/components/market-section'
+import { NFTWidget } from '@/entrypoints/newtab/src/components/nft-widget'
+import { PortfolioWidget } from '@/entrypoints/newtab/src/components/portfolio-widget'
+import { Button } from '@/entrypoints/newtab/src/components/ui/button'
+import { UpdatesSection } from '@/entrypoints/newtab/src/components/updates-section'
+import '@/entrypoints/newtab/src/NewTab.css'
+import '@/entrypoints/newtab/src/NewTab.scss'
 import { CowSwapWidget, CowSwapWidgetParams, TradeType } from '@cowprotocol/widget-react'
+import { ChevronLeft, ChevronRight } from 'lucide-react'
+import { useEffect, useState } from 'react'
+import { useAccount } from 'wagmi'
+
+
+
 
 const NewTab = () => {
   const [isExpanded, setIsExpanded] = useState(() => {
@@ -21,6 +25,26 @@ const NewTab = () => {
     const savedState = localStorage.getItem('sidebarExpanded')
     return savedState !== null ? JSON.parse(savedState) : true
   })
+  const [provider, setProvider] = useState<any>(null);
+
+  const {connector} = useAccount();
+
+  useEffect(() => {
+    if (connector) {
+    connector.getProvider()
+    .then((_provider: any) => {
+      console.log("wagmi provider: ", _provider)
+      setProvider(_provider);
+    })
+    .catch((error: any) => {
+      console.error("Error getting provider: ", error);
+    })
+      
+    }
+  }, [connector]);
+
+  // const provider = connector?.getProvider();
+
 
   useEffect(() => {
     // Save the current state to local storage whenever it changes
@@ -74,7 +98,7 @@ const NewTab = () => {
   }
 
   // Ethereum EIP-1193 provider. For a quick test, you can pass `window.ethereum`, but consider using something like https://web3modal.com
-  const provider = window.ethereum
+  // const provider = window.ethereum
 
   return (
     <div className="flex h-screen overflow-hidden bg-[#0D0B21]">
