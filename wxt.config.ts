@@ -9,7 +9,6 @@ import AutoImport from 'unplugin-auto-import/vite'
 import { FileSystemIconLoader } from 'unplugin-icons/loaders'
 import Icons from 'unplugin-icons/vite'
 import nodePolyfills from 'vite-plugin-node-stdlib-browser'
-import Pages from 'vite-plugin-pages'
 import { defineConfig } from 'wxt'
 
 export default defineConfig({
@@ -24,11 +23,6 @@ export default defineConfig({
         imports: ['react'],
         dts: './auto-imports.d.ts',
         dirs: ['./src/components/ui'],
-      }),
-      Pages({
-        dirs: [{ dir: 'src/entrypoints/sidepanel/pages', baseRoute: '' }],
-        exclude: ['**/[A-Z]*.tsx'],
-        importMode: 'sync',
       }),
       Icons({
         compiler: 'jsx',
@@ -57,10 +51,9 @@ export default defineConfig({
     },
   }),
   manifest: {
-    permissions: ['storage', 'sidePanel'],
-    action: {
-      default_title: 'Click to open oracle panel',
-    },
+    name: 'TokenTab',
+    version: '1.0.0',
+    permissions: ['storage'],
     web_accessible_resources: [
       {
         resources: ['fonts/*.ttf'],
