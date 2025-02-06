@@ -19,13 +19,13 @@ export function NFTWidget() {
   return (
     <Card className="rounded-xl border-0 bg-gray-900/50 p-4">
       <div className="flex justify-center">
-        <h3 className="mb-3 font-semibold text-white">NFT of the day</h3>
+        <h3 className="mb-3 font-semibold !text-white">NFT of the day</h3>
       </div>
       <div className="space-y-4">
         <img src={nftTemp} alt={nftOfTheDay.title} width={300} height={300} className="w-full rounded-lg" />
         <div className="p-2">
           <div className="mb-2 flex items-center justify-between">
-            <h4 className="font-semibold text-white">{nftOfTheDay.title}</h4>
+            <h4 className="font-semibold !text-white">{nftOfTheDay.title}</h4>
           </div>
           <div className="flex items-center gap-2 text-gray-400">
             <span>{nftOfTheDay.creator}</span>
