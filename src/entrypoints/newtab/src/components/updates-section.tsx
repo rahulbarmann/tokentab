@@ -11,12 +11,6 @@ const shouldExpandCard = (card: Card, index: number) => {
   return index % 5 === 0
 }
 
-// Helper function to calculate dynamic bottom padding
-const getBottomPadding = (index: number, columnCount: number) => {
-  const row = Math.floor(index / columnCount)
-  return row % 2 === 0 ? '0px' : '8px' // Alternate row padding
-}
-
 // Helper function to construct tweet URL
 const getTweetUrl = (cardId: string) => `https://x.com/jessepollak/status/${cardId}`
 
@@ -31,12 +25,12 @@ export function UpdatesSection() {
 
   // Responsive breakpoints with column counts
   const breakpointColumnsObj = {
-    default: 5, // 5 columns by default
-    2560: 5, // 5 columns for 4K
-    1920: 4, // 4 columns for 1080p
-    1440: 3, // 3 columns for smaller desktop
-    1024: 2, // 2 columns for tablet landscape
-    768: 1, // 1 column for mobile
+    default: 1, // 1 column by default for mobile
+    640: 1,  // sm
+    768: 2,  // md
+    1024: 3, // lg
+    1440: 4, // xl and up (max 4 columns)
+    1920: 4  // 2xl
   }
 
   const handleCardClick = (cardId: string) => {
@@ -91,7 +85,7 @@ export function UpdatesSection() {
 
   return (
     <div className="origin-top">
-      <div className="lg:scale-90 xl:scale-95 2xl:scale-100">
+      <div className="w-full pr-2">
         <h2 className="mb-4 text-sm font-medium !text-gray-400">UPDATES</h2>
         <Masonry
           breakpointCols={breakpointColumnsObj}
@@ -100,7 +94,6 @@ export function UpdatesSection() {
         >
           {cards.map((card, index) => {
             const isExpanded = shouldExpandCard(card, index)
-            const bottomPadding = getBottomPadding(index, breakpointColumnsObj.default)
 
             return (
               <div
@@ -108,7 +101,6 @@ export function UpdatesSection() {
                 ref={index === cards.length - 1 ? lastCardRef : undefined}
                 className={`transition-all duration-300 ease-in-out ${isExpanded ? 'col-span-2' : ''}`}
                 style={{
-                  marginBottom: bottomPadding,
                   width: '100%',
                   breakInside: 'avoid',
                 }}

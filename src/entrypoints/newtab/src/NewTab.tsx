@@ -24,6 +24,8 @@ interface Widget {
   name: string
   icon: string
   component: React.ReactNode
+  description: string
+  category: string
 }
 
 const NewTab = () => {
@@ -38,6 +40,8 @@ const NewTab = () => {
     const saved = localStorage.getItem('selectedWidgets')
     return saved ? JSON.parse(saved) : ['portfolio', 'cowswap', 'crypto-bubbles', 'nft']
   })
+  const [selectedCategory, setSelectedCategory] = useState('All')
+  const [searchQuery, setSearchQuery] = useState('')
 
   const {connector} = useAccount();
 
@@ -128,24 +132,32 @@ const NewTab = () => {
       name: 'Portfolio',
       icon: portfolio,
       component: <PortfolioWidget />,
+      description: 'Track your crypto portfolio value and performance in real-time',
+      category: 'Finance',
     },
     {
       id: 'cowswap',
       name: 'CowSwap',
       icon: stats,
       component: <CowSwapWidget params={params} provider={provider} />,
+      description: 'Swap tokens with zero price impact and MEV protection',
+      category: 'Trading',
     },
     {
       id: 'crypto-bubbles',
       name: 'Crypto Bubbles',
       icon: globe,
       component: <CryptoBubblesWidget />,
+      description: 'Visualize crypto market movements with interactive bubbles',
+      category: 'Analytics',
     },
     {
       id: 'nft',
       name: 'NFT Gallery',
       icon: nft,
       component: <NFTWidget />,
+      description: 'Browse and showcase your NFT collection',
+      category: 'NFTs',
     },
   ]
 
@@ -219,31 +231,115 @@ const NewTab = () => {
       </div>
 
       <Dialog open={showWidgetDialog} onOpenChange={setShowWidgetDialog}>
-        <DialogContent className="bg-[#0D0B21] text-white sm:max-w-[425px] rounded-3xl border-[#312F62]">
-          <DialogHeader>
-            <DialogTitle className="text-xl">Customize Widgets</DialogTitle>
-          </DialogHeader>
-          <div className="mt-4 space-y-3">
-            {AVAILABLE_WIDGETS.map((widget) => (
-              <div
-                key={widget.id}
-                className="flex items-center justify-between rounded-2xl bg-[#17172A] p-4 hover:bg-[#1F1F35] transition-colors"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="flex items-center justify-center size-10 rounded-xl bg-[#1F1F35]">
-                    <img src={widget.icon} alt={widget.name} className="size-5" />
-                  </div>
-                  <span className="font-medium">{widget.name}</span>
+        <DialogContent className="bg-[#080816] text-white max-w-full h-screen !rounded-none !border-0 p-0 flex flex-col">
+          {/* Close button */}
+          <Button
+            variant="ghost"
+            size="icon"
+            className="absolute right-8 top-8 z-10 size-10 rounded-full bg-[#1F1F35] hover:bg-[#2a2a4a] text-white border border-[#312F62]/30 cursor-pointer"
+            onClick={() => setShowWidgetDialog(false)}
+          >
+            ✕
+          </Button>
+
+          {/* Fixed Header Section */}
+          <div className="flex-shrink-0 relative bg-[#0D0B21] border-b border-[#312F62]/30">
+            <div className="absolute inset-0">
+              <div className="absolute -top-20 -left-20 size-96 rounded-full bg-[#4E4BDE]/5 blur-[100px]"></div>
+              <div className="absolute -top-40 left-60 size-96 rounded-full bg-[#4E4BDE]/3 blur-[100px]"></div>
+              <div className="absolute top-0 right-0 size-96 rounded-full bg-[#4E4BDE]/5 blur-[100px]"></div>
+            </div>
+            
+            <div className="relative max-w-[1200px] mx-auto px-8 pt-12 pb-6">
+              <DialogHeader className="mb-6">
+                <DialogTitle className="text-4xl font-bold bg-gradient-to-r from-white to-white/60 bg-clip-text text-transparent mb-2">
+                  Widget Marketplace
+                </DialogTitle>
+                <p className="text-gray-400 text-base max-w-2xl">
+                  Customize your dashboard with powerful widgets. Each widget is designed to enhance your crypto experience.
+                </p>
+              </DialogHeader>
+            </div>
+          </div>
+
+          {/* Search and Categories - Fixed */}
+          <div className="flex-shrink-0 sticky top-0 z-10 bg-[#080816] px-8 pt-8 pb-4">
+            <div className="max-w-[1200px] mx-auto">
+              {/* Search Bar */}
+              {/* <div className="relative mb-6">
+                <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
+                  <span className="i-lucide:search size-5 text-gray-500" />
                 </div>
-                <Button
-                  variant={selectedWidgets.includes(widget.id) ? 'default' : 'secondary'}
-                  onClick={() => toggleWidget(widget.id)}
-                  className="rounded-xl px-6"
-                >
-                  {selectedWidgets.includes(widget.id) ? 'Remove' : 'Add'}
-                </Button>
+                <input
+                  type="text"
+                  placeholder="Search widgets..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full h-14 rounded-2xl bg-[#141428]/50 border-[#312F62]/30 border px-12 text-white placeholder:text-gray-500 focus:outline-none focus:border-[#4E4BDE]/50 focus:ring-2 focus:ring-[#4E4BDE]/20 transition-all duration-200 cursor-text"
+                />
+              </div> */}
+
+              {/* Categories */}
+              <div className="flex gap-3 overflow-x-auto pb-2">
+                {['All', 'Finance', 'Trading', 'Analytics', 'NFTs'].map((category) => (
+                  <Button
+                    key={category}
+                    size="sm"
+                    onClick={() => setSelectedCategory(category)}
+                    className={`rounded-full px-6 py-5 whitespace-nowrap text-sm font-medium transition-all duration-200 cursor-pointer ${
+                      category === selectedCategory 
+                        ? 'bg-[#4E4BDE] text-white hover:bg-[#6d6beb] shadow-lg shadow-[#4E4BDE]/20' 
+                        : 'bg-[#141428]/50 text-gray-400 hover:text-white hover:bg-[#1F1F35] hover:shadow-lg hover:shadow-[#4E4BDE]/10'
+                    }`}
+                  >
+                    {category}
+                  </Button>
+                ))}
               </div>
-            ))}
+            </div>
+          </div>
+
+          {/* Scrollable Content Section */}
+          <div className="flex-1 overflow-y-auto min-h-0">
+            <div className="max-w-[1200px] mx-auto px-8 py-8">
+              {/* Widgets Grid */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {AVAILABLE_WIDGETS.filter(widget => 
+                  (selectedCategory === 'All' || widget.category === selectedCategory) &&
+                  (widget.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                   widget.description.toLowerCase().includes(searchQuery.toLowerCase()))
+                ).map((widget) => (
+                  <div
+                    key={widget.id}
+                    className="group flex flex-col rounded-2xl bg-[#141428]/50 backdrop-blur-sm p-6 transition-all duration-300 border border-[#312F62]/30 hover:border-[#4E4BDE]/50 hover:shadow-lg hover:shadow-[#4E4BDE]/5"
+                  >
+                    <div className="flex items-center gap-4 mb-4">
+                      <div className="flex items-center justify-center size-12 rounded-2xl bg-[#1F1F35] group-hover:bg-[#4E4BDE]/10 transition-colors duration-300">
+                        <img src={widget.icon} alt={widget.name} className="size-6" />
+                      </div>
+                      <div>
+                        <h3 className="font-semibold text-lg text-white/90 mb-1">{widget.name}</h3>
+                        <span className="text-xs text-gray-400 bg-[#1F1F35] px-2 py-0.5 rounded-full">{widget.category}</span>
+                      </div>
+                    </div>
+                    
+                    <p className="text-gray-400 text-sm mb-6 flex-grow leading-relaxed">{widget.description}</p>
+                    
+                    <Button
+                      variant={selectedWidgets.includes(widget.id) ? 'default' : 'secondary'}
+                      onClick={() => toggleWidget(widget.id)}
+                      className={`w-full h-12 rounded-xl font-medium transition-all duration-300 cursor-pointer flex items-center justify-center ${
+                        selectedWidgets.includes(widget.id)
+                          ? 'bg-[#4E4BDE] hover:bg-[#6d6beb] shadow-lg shadow-[#4E4BDE]/20'
+                          : 'bg-[#1F1F35] hover:bg-[#2a2a4a] hover:shadow-lg hover:shadow-[#4E4BDE]/10'
+                      }`}
+                    >
+                      {selectedWidgets.includes(widget.id) ? 'Installed' : 'Install'}
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
         </DialogContent>
       </Dialog>
