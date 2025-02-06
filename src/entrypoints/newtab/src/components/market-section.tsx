@@ -1,14 +1,14 @@
+import bitcoin from '@/assets/bitcoin.svg'
+import downline from '@/assets/downline.svg'
+import upline from '@/assets/upline.svg'
+import { Button } from '@/entrypoints/newtab/src/components/ui/button'
 import { Card } from '@/entrypoints/newtab/src/components/ui/card'
 import type { CryptoPrice } from '@/entrypoints/newtab/src/types/dashboard'
-import bitcoin from '@/assets/bitcoin.svg'
-import upline from '@/assets/upline.svg'
-import downline from '@/assets/downline.svg'
-import { useEffect, useState } from 'react'
-import type { ChangeEvent } from 'react'
-import { Button } from '@/entrypoints/newtab/src/components/ui/button'
-import { Input } from './ui/input'
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from './ui/dialog'
 import { X } from 'lucide-react'
+import type { ChangeEvent } from 'react'
+import { useEffect, useState } from 'react'
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from './ui/dialog'
+import { Input } from './ui/input'
 
 const DEFAULT_PINNED_TOKEN_IDS = [
   'ee9702a0-c587-4c69-ac0c-ce820a50c95b', // Bitcoin
@@ -54,20 +54,15 @@ export function MarketSection() {
   const fetchTokens = async () => {
     try {
       const response = await fetch(
-        'https://api.zerion.io/v1/fungibles/?currency=usd&page[size]=100&sort=-market_data.market_cap',
-        {
-          headers: {
-            accept: 'application/json',
-            authorization: `Basic ${import.meta.env.VITE_AUTHORIZATION_HEADER}`,
-          },
-        }
+        'https://api.tokentab.io/getPrices',
+        
       )
       const data = await response.json()
-      setAllTokens(data.data)
+      setAllTokens(data)
 
       const pinnedData = pinnedTokens.map((tokenId) => {
         if (!tokenId) return null
-        const token = data.data.find((t: ZerionToken) => t.id === tokenId)
+        const token = data.find((t: ZerionToken) => t.id === tokenId)
         if (!token) return null
         return {
           symbol: token.attributes.symbol,

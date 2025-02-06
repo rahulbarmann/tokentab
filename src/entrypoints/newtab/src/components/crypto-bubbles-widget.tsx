@@ -1,7 +1,7 @@
-import { useEffect, useState, useRef } from 'react'
-import { Card } from '@/entrypoints/newtab/src/components/ui/card'
 import { Button } from '@/entrypoints/newtab/src/components/ui/button'
+import { Card } from '@/entrypoints/newtab/src/components/ui/card'
 import { RefreshCw } from 'lucide-react'
+import { useEffect, useRef, useState } from 'react'
 
 interface CryptoData {
   id: string
@@ -40,7 +40,7 @@ export function CryptoBubblesWidget() {
   const fetchData = async () => {
     try {
       setLoading(true)
-      const response = await fetch('https://cryptobubbles.net/backend/data/bubbles1000.usd.json')
+      const response = await fetch('https://api.tokentab.io/getBubbles')
       const data = await response.json()
 
       // Filter out any coins with missing or invalid performance data
