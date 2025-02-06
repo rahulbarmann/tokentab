@@ -1,17 +1,28 @@
-/* eslint-disable unused-imports/no-unused-imports */
-/* eslint-disable unused-imports/no-unused-vars */
-// import { getDefaultConfig } from 'connectkit';
-import { http, createConfig } from 'wagmi'
-import { base, mainnet, sepolia } from 'wagmi/chains'
-import { injected, metaMask, safe } from 'wagmi/connectors'
-
-const projectId = '<WALLETCONNECT_PROJECT_ID>'
+import { createExternalExtensionProvider } from '@metamask/providers'
+import { createConfig, http } from 'wagmi'
+import { arbitrum, avalanche, base, bsc, mainnet, optimism, polygon, sepolia } from 'wagmi/chains'
+import { injected } from 'wagmi/connectors'
 
 export const config = createConfig({
-  chains: [mainnet, base],
-  connectors: [injected(), metaMask(), safe()],
+  ssr: false,
+  chains: [mainnet, polygon, base, optimism, arbitrum, avalanche, bsc],
   transports: {
     [mainnet.id]: http(),
+    [polygon.id]: http(),
     [base.id]: http(),
+    [optimism.id]: http(),
+    [arbitrum.id]: http(),
+    [avalanche.id]: http(),
+    [bsc.id]: http(),
   },
+  connectors: [
+    injected({
+      target: {
+        id: 'metaMask',
+        name: 'MetaMask',
+        icon: '',
+        provider: createExternalExtensionProvider() as any,
+      },
+    }),
+  ],
 })
