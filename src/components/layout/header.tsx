@@ -3,7 +3,7 @@ import { useAccount } from 'wagmi'
 
 import { NetworkSwitcher } from '../web3/SwitchNetworks'
 
-export function Header({ action }: { action?: ReactNode }) {
+export function Headerr({ action }: { action?: ReactNode }) {
   const { isConnected } = useAccount()
 
   return (

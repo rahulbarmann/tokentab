@@ -1,7 +1,6 @@
 import { useAccount, useSwitchChain } from 'wagmi'
-
+import { useMemo, useState } from 'react'
 import { cn } from '@/utils'
-
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '../ui/select'
 
 export function NetworkSwitcher() {
@@ -24,39 +23,34 @@ export function NetworkSwitcher() {
     >
       <SelectTrigger
         className={cn(
-          'h-8 max-w-35',
-          isConnected && !chain?.name
-            ? 'text-destructive border-destructive !outline-[transparent] !shadow-[destructive]'
-            : '',
+          'w-full h-10 bg-[#0D0B21] hover:bg-[#17172A] border border-[#312F62] rounded-lg text-white',
+          isConnected && !chain?.name ? 'text-red-500 border-red-500' : ''
         )}
       >
         <SelectValue>
-          <span className="flex-center">
-            {isPending && (
-              <span className="i-line-md:loading-twotone-loop mr-1 h-4 w-4 inline-flex text-primary" />
-            )}
-            {' '}
-            {isConnected ? chain?.name ?? 'Error Net' : 'Select'}
+          <span className="flex items-center gap-2">
+            {isPending && <span className="i-line-md:loading-twotone-loop h-4 w-4 inline-flex text-white" />}
+            {isConnected ? chain?.name ?? 'Error Network' : 'Select Network'}
           </span>
         </SelectValue>
-        {!chain && 'Error Network'}
       </SelectTrigger>
-      <SelectContent>
+      <SelectContent className="bg-[#0D0B21] border border-[#312F62] text-white">
         <SelectGroup>
-          {chains.map(x =>
-            x.id === chain?.id
-              ? null
-              : (
-                  <SelectItem value={`${x.id}`} key={x.id} className="">
-                    <span className="flex-center">
-                      {isPending && x.id === pendingChainId && (
-                        <span className="i-line-md:loading-twotone-loop mr-1 h-4 w-4 inline-flex text-primary" />
-                      )}
-                      {' '}
-                      {x.name}
-                    </span>
-                  </SelectItem>
-                ),
+          {chains.map((x) =>
+            x.id === chain?.id ? null : (
+              <SelectItem
+                value={`${x.id}`}
+                key={x.id}
+                className="hover:bg-[#17172A] cursor-pointer rounded-lg text-white focus:bg-[#17172A] focus:text-white"
+              >
+                <span className="flex items-center gap-2">
+                  {isPending && x.id === pendingChainId && (
+                    <span className="i-line-md:loading-twotone-loop h-4 w-4 inline-flex text-white" />
+                  )}
+                  {x.name}
+                </span>
+              </SelectItem>
+            )
           )}
         </SelectGroup>
       </SelectContent>
