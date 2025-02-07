@@ -52,7 +52,7 @@ export default defineConfig({
   }),
   manifest: {
     name: 'TokenTab',
-    version: '1.0.0',
+    version: '1.0.1',
     permissions: ['storage'],
     web_accessible_resources: [
       {
