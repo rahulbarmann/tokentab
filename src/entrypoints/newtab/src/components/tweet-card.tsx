@@ -6,6 +6,7 @@ import { Card } from '@/entrypoints/newtab/src/components/ui/card'
 import type { Card as ContentCardType } from '@/entrypoints/newtab/src/types/dashboard'
 import { ExternalLink, Calendar, Eye, Heart, MessageCircle, Repeat, Bookmark } from 'lucide-react'
 import { cn } from '@/entrypoints/newtab/src/lib/utils'
+import { useEffect, useRef, useState } from 'react'
 
 // Helper function to extract first image from HTML content
 const extractFirstImage = (html: string): string | null => {
@@ -39,6 +40,47 @@ export function ContentCard({
       }
       return num.toString()
     }
+
+    // Inside the ContentCard component, before the return statement:
+    const statsRef = useRef<HTMLDivElement>(null)
+    const [visibleStatsCount, setVisibleStatsCount] = useState(5) // Start with all visible
+    const [hiddenStatsCount, setHiddenStatsCount] = useState(0)
+
+    useEffect(() => {
+      const calculateVisibleStats = () => {
+        const container = statsRef.current
+        if (!container) return
+
+        const stats = Array.from(container.children) as HTMLElement[]
+        if (stats.length === 0) return
+
+        const containerWidth = container.offsetWidth
+        const moreButtonWidth = 48 // Approximate width of "+X" button
+        const firstStat = stats[0]
+        const statWidth = firstStat?.offsetWidth || 0
+
+        // Calculate how many stats can fit including potential more button
+        let availableWidth = containerWidth
+        let visibleCount = 0
+
+        while (availableWidth > 0 && visibleCount < stats.length) {
+          const neededWidth = (visibleCount + 1) * statWidth + (visibleCount === stats.length - 1 ? 0 : moreButtonWidth)
+          if (neededWidth <= containerWidth) {
+            visibleCount++
+            availableWidth = containerWidth - visibleCount * statWidth
+          } else {
+            break
+          }
+        }
+
+        setVisibleStatsCount(visibleCount)
+        setHiddenStatsCount(stats.length - visibleCount)
+      }
+
+      calculateVisibleStats()
+      window.addEventListener('resize', calculateVisibleStats)
+      return () => window.removeEventListener('resize', calculateVisibleStats)
+    }, [])
 
     return (
       <Card
@@ -86,27 +128,27 @@ export function ContentCard({
             />
           </div>
         )}
-        <div className="flex flex-wrap pt-4 items-center gap-4 text-gray-400">
-          <div className="flex items-center gap-1.5">
-            <Eye className="size-3.5" />
-            <span className="text-xs">{formatNumber(card.engagement.views)}</span>
-          </div>
-          <div className="flex items-center gap-1.5">
-            <Heart className="size-3.5" />
-            <span className="text-xs">{formatNumber(card.engagement.likes)}</span>
-          </div>
-          <div className="flex items-center gap-1.5">
-            <MessageCircle className="size-3.5" />
-            <span className="text-xs">{formatNumber(card.engagement.replies)}</span>
-          </div>
-          <div className="flex items-center gap-1.5">
-            <Repeat className="size-3.5" />
-            <span className="text-xs">{formatNumber(card.engagement.retweets)}</span>
-          </div>
-          <div className="flex items-center gap-1.5">
-            <Bookmark className="size-3.5" />
-            <span className="text-xs">{formatNumber(card.engagement.bookmarks)}</span>
-          </div>
+        <div ref={statsRef} className="flex pt-4 items-center gap-4 text-gray-400 overflow-hidden">
+          {[
+            { icon: Eye, value: card.engagement.views },
+            { icon: Heart, value: card.engagement.likes },
+            { icon: MessageCircle, value: card.engagement.replies },
+            { icon: Repeat, value: card.engagement.retweets },
+            { icon: Bookmark, value: card.engagement.bookmarks },
+          ]
+            .slice(0, visibleStatsCount)
+            .map((stat, index) => (
+              <div key={index} className="flex items-center gap-1.5 shrink-0">
+                <stat.icon className="size-3.5 min-w-[14px]" />
+                <span className="text-xs whitespace-nowrap">{formatNumber(stat.value)}</span>
+              </div>
+            ))}
+
+          {hiddenStatsCount > 0 && (
+            <div className="flex items-center gap-1.5 shrink-0 text-gray-400">
+              <span className="text-xs">+{hiddenStatsCount}</span>
+            </div>
+          )}
         </div>
       </Card>
     )
