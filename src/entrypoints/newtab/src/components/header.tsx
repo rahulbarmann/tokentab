@@ -31,7 +31,7 @@ export function Header() {
     if (connector) {
       setPendingConnectorId(connector.id)
       const result = await connectAsync({ connector })
-      console.log("inside connector", {result})
+      console.log('inside connector', { result })
     }
   }
 
@@ -84,7 +84,7 @@ export function Header() {
             <Pencil size={16} />
           </button>
         </div>
-        <p className="text-sm text-gray-400">some heading text comes here</p>
+        <p className="text-sm text-gray-400">Your daily dose of crypto chaos</p>
       </div>
 
       <div className="flex items-center gap-3">
