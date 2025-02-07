@@ -30,21 +30,57 @@ export function ContentCard({
     const imageToShow = card.media?.url || htmlImage
     const contentWithoutImages = card.html.replace(/<img[^>]*>/g, '')
 
-    // Utility function to format numbers
-    const formatNumber = (num: number): string => {
-      if (num >= 1000000) {
-        return (num / 1000000).toFixed(1).replace(/\.0$/, '') + 'M'
-      }
-      if (num >= 1000) {
-        return (num / 1000).toFixed(1).replace(/\.0$/, '') + 'K'
-      }
-      return num.toString()
-    }
+    // Inside the ContentCard component, add these before the return statement:
+    const timestampRef = useRef<HTMLDivElement>(null)
+    const [showFullDate, setShowFullDate] = useState(true)
 
     // Inside the ContentCard component, before the return statement:
     const statsRef = useRef<HTMLDivElement>(null)
     const [visibleStatsCount, setVisibleStatsCount] = useState(5) // Start with all visible
     const [hiddenStatsCount, setHiddenStatsCount] = useState(0)
+
+    // Update the timestamp useEffect hook
+    useEffect(() => {
+      const updateDateVisibility = () => {
+        const container = timestampRef.current
+        if (!container) return
+
+        // Get the total available width considering padding
+        const containerStyle = window.getComputedStyle(container)
+        const padding = parseFloat(containerStyle.paddingLeft) + parseFloat(containerStyle.paddingRight)
+        const availableWidth = container.offsetWidth - padding
+
+        // Measure text widths
+        const fullDateText = new Date(card.timestamp).toLocaleDateString()
+        const tempSpan = document.createElement('span')
+        tempSpan.className = 'text-[10px] whitespace-nowrap'
+        tempSpan.textContent = fullDateText
+        document.body.appendChild(tempSpan)
+        const fullTextWidth = tempSpan.offsetWidth
+        document.body.removeChild(tempSpan)
+
+        // Check if full date fits with icon
+        const iconWidth = 14 // size-2.5 (10px) + 4px gap
+        setShowFullDate(iconWidth + fullTextWidth <= availableWidth)
+      }
+
+      // Add debounce for better performance
+      const debouncedUpdate = debounce(updateDateVisibility, 100)
+      updateDateVisibility()
+      window.addEventListener('resize', debouncedUpdate)
+      return () => {
+        window.removeEventListener('resize', debouncedUpdate)
+      }
+    }, [card.timestamp]) // Add card.timestamp as dependency
+
+    // Add this debounce utility function
+    function debounce(func: (...args: any[]) => void, wait: number) {
+      let timeout: NodeJS.Timeout
+      return (...args: any[]) => {
+        clearTimeout(timeout)
+        timeout = setTimeout(() => func(...args), wait)
+      }
+    }
 
     useEffect(() => {
       const calculateVisibleStats = () => {
@@ -82,6 +118,17 @@ export function ContentCard({
       return () => window.removeEventListener('resize', calculateVisibleStats)
     }, [])
 
+    // Utility function to format numbers
+    const formatNumber = (num: number): string => {
+      if (num >= 1000000) {
+        return (num / 1000000).toFixed(1).replace(/\.0$/, '') + 'M'
+      }
+      if (num >= 1000) {
+        return (num / 1000).toFixed(1).replace(/\.0$/, '') + 'K'
+      }
+      return num.toString()
+    }
+
     return (
       <Card
         className={cn(
@@ -112,9 +159,17 @@ export function ContentCard({
               </div>
             </div>
           </div>
-          <div className="flex items-center gap-1 text-gray-400">
-            <Calendar className="size-2.5" />
-            <span className="text-[10px] text-gray-400">{new Date(card.timestamp).toLocaleDateString()}</span>
+          <div ref={timestampRef} className="flex items-center gap-1 text-gray-400">
+            <Calendar className="size-2.5 shrink-0" />
+            <span className="text-[10px] text-gray-400 whitespace-nowrap">
+              {showFullDate
+                ? new Date(card.timestamp).toLocaleDateString()
+                : new Date(card.timestamp).toLocaleDateString('en-US', {
+                    month: '2-digit',
+                    day: '2-digit',
+                    year: '2-digit',
+                  })}
+            </span>
           </div>
         </div>
         <div className="mb-3 text-sm text-gray-300" dangerouslySetInnerHTML={{ __html: contentWithoutImages }} />
