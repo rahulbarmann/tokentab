@@ -17,6 +17,7 @@ import { CowSwapWidget, CowSwapWidgetParams, TradeType } from '@cowprotocol/widg
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useAccount } from 'wagmi'
+import { OfflinePage } from './components/offline-page'
 
 // Define widget types
 interface Widget {
@@ -29,6 +30,7 @@ interface Widget {
 }
 
 const NewTab = () => {
+  const [isOnline, setIsOnline] = useState(navigator.onLine)
   const [isExpanded, setIsExpanded] = useState(() => {
     // Retrieve the saved state from local storage or default to true
     const savedState = localStorage.getItem('sidebarExpanded')
@@ -44,6 +46,20 @@ const NewTab = () => {
   const [searchQuery, setSearchQuery] = useState('')
 
   const { connector } = useAccount()
+
+  // Add online/offline detection
+  useEffect(() => {
+    const handleOnline = () => setIsOnline(true)
+    const handleOffline = () => setIsOnline(false)
+
+    window.addEventListener('online', handleOnline)
+    window.addEventListener('offline', handleOffline)
+
+    return () => {
+      window.removeEventListener('online', handleOnline)
+      window.removeEventListener('offline', handleOffline)
+    }
+  }, [])
 
   useEffect(() => {
     if (connector) {
@@ -69,6 +85,10 @@ const NewTab = () => {
   useEffect(() => {
     localStorage.setItem('selectedWidgets', JSON.stringify(selectedWidgets))
   }, [selectedWidgets])
+
+  if (!isOnline) {
+    return <OfflinePage />
+  }
 
   const handleWidgetClick = () => {
     if (!isExpanded) {
