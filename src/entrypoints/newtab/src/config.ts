@@ -1,8 +1,7 @@
-import provider from 'metamask-extension-provider';
-import { createConfig, http } from 'wagmi';
-import { mainnet, sepolia } from 'wagmi/chains';
-import { injected } from 'wagmi/connectors';
-
+import provider from 'metamask-extension-provider'
+import { createConfig, http } from 'wagmi'
+import { mainnet, sepolia } from 'wagmi/chains'
+import { injected } from 'wagmi/connectors'
 
 // Create a stream to a remote provider:
 // const metamaskStream = new LocalMessageDuplexStream({
@@ -29,7 +28,6 @@ export const config = createConfig({
     // [arbitrum.id]: http(),
     // [avalanche.id]: http(),
     // [bsc.id]: http(),
-
   },
   connectors: [
     injected({
@@ -37,7 +35,7 @@ export const config = createConfig({
         id: 'metaMask',
         name: 'MetaMask',
         icon: '',
-        provider:provider as any
+        provider: provider as any,
       },
     }),
   ],
