@@ -52,7 +52,7 @@ export default defineConfig({
   }),
   manifest: {
     name: 'TokenTab',
-    version: '1.0.2',
+    version: '1.0.3',
     web_accessible_resources: [
       {
         resources: ['fonts/*.ttf'],
