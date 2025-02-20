@@ -59,13 +59,13 @@ export default defineConfig({
     ],
     web_accessible_resources: [
       {
-        resources: ['fonts/*.ttf'],
+        resources: ['fonts/*.ttf', 'assets/external-scripts/*'],
         matches: ['*://*/*'],
       },
     ],
     // @ts-expect-error chrome_url_overrides is valid for Chrome extensions
     chrome_url_overrides: {
       newtab: 'src/entrypoints/newtab/index.html',
-    },
+    }
   } satisfies Partial<Manifest.WebExtensionManifest>,
 })
