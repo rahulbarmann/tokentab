@@ -53,10 +53,7 @@ export default defineConfig({
   manifest: {
     name: 'TokenTab',
     version: '1.0.4',
-    host_permissions: [
-      'https://us.i.posthog.com/*',
-      'https://api.tokentab.io/*'
-    ],
+    host_permissions: ['https://us.i.posthog.com/*', 'https://api.tokentab.io/*'],
     web_accessible_resources: [
       {
         resources: ['fonts/*.ttf', 'assets/external-scripts/*'],
@@ -66,6 +63,6 @@ export default defineConfig({
     // @ts-expect-error chrome_url_overrides is valid for Chrome extensions
     chrome_url_overrides: {
       newtab: 'src/entrypoints/newtab/index.html',
-    }
+    },
   } satisfies Partial<Manifest.WebExtensionManifest>,
 })

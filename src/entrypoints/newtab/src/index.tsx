@@ -7,9 +7,6 @@ import { config } from './config'
 import './index.css'
 import NewTab from './NewTab'
 
-// Initialize PostHog
-initAnalytics()
-
 const queryClient = new QueryClient()
 
 const root = createRoot(document.querySelector('#app')!)
@@ -17,7 +14,7 @@ root.render(
   <React.StrictMode>
     <WagmiProvider config={config} reconnectOnMount={false}>
       <QueryClientProvider client={queryClient}>
-          <NewTab />
+        <NewTab />
       </QueryClientProvider>
     </WagmiProvider>
   </React.StrictMode>

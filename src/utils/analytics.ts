@@ -1,30 +1,36 @@
-import posthog from 'posthog-js'
-
 const POSTHOG_KEY = 'phc_e7VhMvdctP4QSoUC3OsQC1KVB40pwKmfqRAHelY3dPL'
 const POSTHOG_HOST = 'https://us.i.posthog.com'
 
-export function initAnalytics() {
+export async function trackEvent(eventName: string, properties: Record<string, any> = {}) {
   try {
-    posthog.init(POSTHOG_KEY, {
-      api_host: POSTHOG_HOST,
-      persistence: 'localStorage',
-      autocapture: true,
-      capture_pageview: true,
-      capture_pageleave: true,
-      disable_session_recording: true, // Disable session recording for privacy
-      respect_dnt: true, // Respect Do Not Track setting
-    })
-  } catch (error) {
-    console.error('Failed to initialize PostHog:', error)
-  }
-}
+    const payload = {
+      api_key: POSTHOG_KEY,
+      event: eventName,
+      properties: {
+        ...properties,
+        distinct_id: getUserId(),
+      },
+    }
 
-export function trackEvent(eventName: string, properties?: Record<string, any>) {
-  try {
-    posthog.capture(eventName, properties)
+    await fetch(`${POSTHOG_HOST}/capture/`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload),
+    })
   } catch (error) {
     console.error('Failed to track event:', error)
   }
+}
+
+function getUserId(): string {
+  const storedId = localStorage.getItem('posthog_user_id')
+  if (storedId) return storedId
+
+  const newId = crypto.randomUUID()
+  localStorage.setItem('posthog_user_id', newId)
+  return newId
 }
 
 export function trackInstall() {
@@ -59,4 +65,4 @@ function getBrowserInfo() {
   if (userAgent.includes('Safari')) return 'Safari'
   if (userAgent.includes('Edge')) return 'Edge'
   return 'Unknown'
-} 
+}
