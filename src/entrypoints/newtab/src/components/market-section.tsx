@@ -74,9 +74,9 @@ export function MarketSection() {
       })
 
       setCryptoPrices(pinnedData)
-      trackEvent('market_data_updated', {
-        tokens: pinnedData?.map(token => token?.symbol).filter(Boolean),
-      })
+      // trackEvent('market_data_updated', {
+      //   tokens: pinnedData?.map(token => token?.symbol).filter(Boolean),
+      // })
     } catch (error) {
       console.error('Error fetching token data:', error)
       trackError(error as Error, { context: 'market_data_fetch' })

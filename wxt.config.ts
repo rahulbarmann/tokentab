@@ -55,7 +55,7 @@ export default defineConfig({
     version: '1.0.4',
     host_permissions: [
       'https://us.i.posthog.com/*',
-      'https://api.tokentab.io/*',
+      'https://api.tokentab.io/*'
     ],
     web_accessible_resources: [
       {
