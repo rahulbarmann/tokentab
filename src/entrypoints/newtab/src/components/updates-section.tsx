@@ -26,12 +26,12 @@ export function UpdatesSection() {
 
   // Responsive breakpoints with column counts
   const breakpointColumnsObj = {
-    default: 1, // 1 column by default for mobile
-    640: 1,  // sm
-    768: 2,  // md
+    default: 4, // Changed from 1 to 4
+    640: 1, // sm
+    768: 2, // md
     1024: 3, // lg
-    1440: 4, // xl and up (max 4 columns)
-    1920: 4  // 2xl
+    1440: 4, // xl
+    1920: 4, // 2xl
   }
 
   const handleCardClick = (cardId: string) => {
