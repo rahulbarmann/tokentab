@@ -4,6 +4,7 @@ import type { APIResponse, Card } from '@/entrypoints/newtab/src/types/dashboard
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { ContentCard } from './tweet-card'
 import Masonry from 'react-masonry-css'
+import { trackEvent } from '@/utils/analytics'
 
 // Helper function to determine if a card should be expanded
 const shouldExpandCard = (card: Card, index: number) => {
@@ -34,7 +35,9 @@ export function UpdatesSection() {
   }
 
   const handleCardClick = (cardId: string) => {
-    window.open(getTweetUrl(cardId), '_blank')
+    const tweetUrl = getTweetUrl(cardId)
+    window.open(tweetUrl, '_blank')
+    trackEvent('tweet_open', { url: tweetUrl })
   }
 
   const lastCardRef = useCallback(

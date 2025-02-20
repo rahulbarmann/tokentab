@@ -52,10 +52,7 @@ export default defineConfig({
   }),
   manifest: {
     name: 'TokenTab',
-    version: '1.0.3',
-    permissions: [
-      'storage'
-    ],
+    version: '1.0.4',
     host_permissions: [
       'https://us.i.posthog.com/*'
     ],
