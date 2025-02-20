@@ -9,6 +9,7 @@ import type { ChangeEvent } from 'react'
 import { useEffect, useState } from 'react'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from './ui/dialog'
 import { Input } from './ui/input'
+import { trackError, trackEvent } from '@/utils/analytics'
 
 const DEFAULT_PINNED_TOKEN_IDS = [
   'ee9702a0-c587-4c69-ac0c-ce820a50c95b', // Bitcoin
@@ -55,7 +56,6 @@ export function MarketSection() {
     try {
       const response = await fetch(
         'https://api.tokentab.io/getPrices',
-        
       )
       const data = await response.json()
       setAllTokens(data)
@@ -74,8 +74,12 @@ export function MarketSection() {
       })
 
       setCryptoPrices(pinnedData)
+      trackEvent('market_data_updated', {
+        tokens: pinnedData?.map(token => token?.symbol).filter(Boolean),
+      })
     } catch (error) {
       console.error('Error fetching token data:', error)
+      trackError(error as Error, { context: 'market_data_fetch' })
     }
   }
 
@@ -87,6 +91,9 @@ export function MarketSection() {
 
   useEffect(() => {
     localStorage.setItem('pinnedTokens', JSON.stringify(pinnedTokens))
+    trackEvent('pinned_tokens_updated', {
+      tokens: pinnedTokens.filter(Boolean)
+    })
   }, [pinnedTokens])
 
   const handleAddToken = (tokenId: string) => {

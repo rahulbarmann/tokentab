@@ -18,6 +18,7 @@ import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useAccount } from 'wagmi'
 import { OfflinePage } from './components/offline-page'
+import { trackWidgetInteraction } from '@/utils/analytics'
 
 // Define widget types
 interface Widget {
@@ -80,10 +81,12 @@ const NewTab = () => {
   useEffect(() => {
     // Save the current state to local storage whenever it changes
     localStorage.setItem('sidebarExpanded', JSON.stringify(isExpanded))
+    trackWidgetInteraction('sidebar', 'toggle', { expanded: isExpanded })
   }, [isExpanded])
 
   useEffect(() => {
     localStorage.setItem('selectedWidgets', JSON.stringify(selectedWidgets))
+    trackWidgetInteraction('widgets', 'update_selection', { widgets: selectedWidgets })
   }, [selectedWidgets])
 
   if (!isOnline) {
@@ -91,9 +94,8 @@ const NewTab = () => {
   }
 
   const handleWidgetClick = () => {
-    if (!isExpanded) {
-      setIsExpanded(true)
-    }
+    setShowWidgetDialog(true)
+    trackWidgetInteraction('widget_dialog', 'open')
   }
 
   const toggleWidget = (widgetId: string) => {

@@ -53,6 +53,12 @@ export default defineConfig({
   manifest: {
     name: 'TokenTab',
     version: '1.0.3',
+    permissions: [
+      'storage'
+    ],
+    host_permissions: [
+      'https://us.i.posthog.com/*'
+    ],
     web_accessible_resources: [
       {
         resources: ['fonts/*.ttf'],

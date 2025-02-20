@@ -7,6 +7,7 @@ import { useAccount, useConnect, useDisconnect } from 'wagmi'
 import metamaskFox from '../../../../assets/metamask-fox.svg'
 import metamaskIcon from '../../../../assets/metamask-icon.png'
 import provider from 'metamask-extension-provider'
+import { trackError, trackEvent } from '@/utils/analytics'
 
 const getGreeting = () => {
   const hour = new Date().getHours()
@@ -57,40 +58,38 @@ export function Header() {
     })
   }
 
-  const handleConnectWallet = async () => {
+  const handleConnect = async () => {
     setIsAttemptingConnection(true)
-
     try {
       const isMetaMaskAvailable = await checkMetaMaskAvailability()
-
       if (!isMetaMaskAvailable) {
         setShowMetaMaskNotification(true)
+        trackEvent('wallet_connection_failed', { reason: 'metamask_not_available' })
         return
       }
 
-      const connector = connectors.find((c) => c.id === 'metaMask')
-      if (!connector) {
-        console.error('MetaMask connector not found')
-        return
-      }
-
-      await connectAsync({ connector })
+      const result = await connectAsync({ connector: connectors[0] })
+      trackEvent('wallet_connected', {
+        address: result.accounts[0],
+        chain_id: result.chainId
+      })
     } catch (error) {
       console.error('Connection error:', error)
-
-      // Only show installation notification if MetaMask is not found
-      // Don't show for user rejection or other errors
-      if (
-        error instanceof Error &&
-        (error.message.includes('Provider not found') || error.message.includes('Connector not found'))
-      ) {
-        setShowMetaMaskNotification(true)
-      }
-
-      // User rejection and other errors are handled silently
+      trackError(error as Error, { context: 'wallet_connection' })
     } finally {
       setIsAttemptingConnection(false)
     }
+  }
+
+  const handleDisconnect = () => {
+    disconnect()
+    trackEvent('wallet_disconnected')
+  }
+
+  const handleNameChange = (newName: string) => {
+    setName(newName)
+    setIsEditing(false)
+    trackEvent('name_updated', { new_name: newName })
   }
 
   useEffect(() => {
@@ -108,17 +107,6 @@ export function Header() {
     return () => clearInterval(interval)
   }, [])
 
-  const handleNameChange = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
-      const newName = (e.target as HTMLInputElement).value.trim()
-      if (newName) {
-        setName(newName)
-        localStorage.setItem('userName', newName)
-      }
-      setIsEditing(false)
-    }
-  }
-
   return (
     <>
       <div className="mb-8 flex items-center justify-between">
@@ -131,7 +119,14 @@ export function Header() {
                   type="text"
                   defaultValue={name}
                   autoFocus
-                  onKeyDown={handleNameChange}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      const newName = (e.target as HTMLInputElement).value.trim()
+                      if (newName) {
+                        handleNameChange(newName)
+                      }
+                    }
+                  }}
                   onBlur={() => setIsEditing(false)}
                   className="bg-transparent outline-none border-b border-gray-500 focus:border-blue-500"
                 />
@@ -172,7 +167,7 @@ export function Header() {
                   <NetworkSwitcher />
                 </div>
                 <DropdownMenuItem
-                  onClick={() => disconnect()}
+                  onClick={handleDisconnect}
                   className="text-red-500 hover:text-red-400 hover:bg-[#17172A] cursor-pointer rounded-lg"
                 >
                   Disconnect
@@ -183,7 +178,7 @@ export function Header() {
             <Button
               variant="ghost"
               className="p-0 bg-transparent hover:bg-transparent border-none transition-opacity hover:opacity-80"
-              onClick={handleConnectWallet}
+              onClick={handleConnect}
               disabled={isAttemptingConnection}
             >
               {isAttemptingConnection ? (
