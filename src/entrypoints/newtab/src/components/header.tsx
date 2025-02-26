@@ -71,7 +71,7 @@ export function Header() {
       const result = await connectAsync({ connector: connectors[0] })
       trackEvent('wallet_connected', {
         address: result.accounts[0],
-        chain_id: result.chainId
+        chain_id: result.chainId,
       })
     } catch (error) {
       console.error('Connection error:', error)
@@ -89,6 +89,7 @@ export function Header() {
   const handleNameChange = (newName: string) => {
     setName(newName)
     setIsEditing(false)
+    localStorage.setItem('userName', newName)
     trackEvent('name_updated', { new_name: newName })
   }
 
